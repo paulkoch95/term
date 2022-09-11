@@ -9,16 +9,17 @@ __status__ = "development"
 from core import App, Text
 from layouter import GridLayout
 
-g = """ .   .       .
-        .   name    .
-        .   name    .
-        .   class   .
-        .   .       ."""
-
-l = GridLayout("Test", g)
-l.resolve_grid()
-exit()
+g = """ .   .       .      .
+        .   name    name   .
+        .   name    name   .
+        .   class   .      .
+        .   .       .      ."""
+# g = """."""
 app = App()
+l = GridLayout("Test", g, app.get_window_handle())
+l.resolve_grid()
+
+exit(1)
 text =  Text(app.get_window_handle(),15,5, "data")
 print(text)
 app.add_widget(text)
