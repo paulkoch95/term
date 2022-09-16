@@ -7,25 +7,29 @@ __status__ = "development"
 
 
 from core import App, Text
-from layouter import GridLayout
+from layouter import TemplateGridLayout, ColumnLayout
+app = App()
+l = ColumnLayout("Test Layout", app.handle, 5)
+print(l._name)
+text =  Text(app.handle, 25, 5, "data")
+print(app)
+# exit(1)
+text2 =  Text(app.handle, 5, 5, "etwas näher")
+text3 =  Text(app.handle, 45, 5, "weit weg")
+app.add_widget(text2)
+print(text)
+app.render()
 
 g = """ .   .       .      .
         .   name    name   .
-        .   name    name   .
+        .   name    name   block
         .   class   .      .
         .   .       .      ."""
-# g = """."""
-app = App()
+"""
+
 l = GridLayout("Test", g, app.get_window_handle())
 l.resolve_grid()
-
-exit(1)
-text =  Text(app.get_window_handle(),15,5, "data")
-print(text)
-app.add_widget(text)
-app.render()
-
-"""while running:
+while running:
     max_y, max_x = stdscr.getmaxyx()
     data_x = np.arange(max_x-5)
     data_y = np.sin(data_x / 2) * 10

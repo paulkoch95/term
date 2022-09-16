@@ -11,7 +11,6 @@ from curses import panel
 import random
 import time
 import sys
-import numpy as np
 import abc
 
 
@@ -32,14 +31,27 @@ class App:
     def add_widget(self, widget: 'Renderable'):
         self._renderables.append(widget)
 
-    def get_window_handle(self):
+    @property
+    def height(self):
+        return self._height
+
+    @property
+    def width(self):
+        return self._width
+    
+    @property
+    def handle(self):
         return self._window
 
     def render(self):
         while True:
+            event = self._window.getch()
+            # print(event)
             ctx: Renderable
             for ctx in self._renderables:
+                # sself._window.addstr(0,0,"hi")
                 ctx.render()
+                self._window.addstr(0,0,str(event))
             self._window.refresh()
             time.sleep(0.5)
 
@@ -49,9 +61,11 @@ class Renderable:
     Base Class for all objects that can be displayed on the "screen" terminal.
     """
     def __init__(self, render, x, y):
-        self._w = render
+        self._ctx = render
         self._x = x
         self._y = y
+        self._w = -99
+        self._h = -99
 
     def render(self):
         """
@@ -62,8 +76,15 @@ class Renderable:
         raise NotImplementedError
 
     def __repr__(self):
-        return(f'X: {self._x} Y {self._y} W {-1} H {-1}')
+        return(f'X: {self._x} Y {self._y} W {self._w} H {self._h}')
 
+    @property
+    def width(self):
+        return self._w
+
+    @property
+    def height(self):
+        return self._h
 
 class Text(Renderable):
     """
@@ -79,4 +100,4 @@ class Text(Renderable):
 
     def render(self):
 
-        self._w.addstr(self._y,self._x, self._text)
+        self._ctx.addstr(self._y, self._x, self._text)

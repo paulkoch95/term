@@ -7,6 +7,7 @@ __status__ = "development"
 
 import curses
 from dataclasses import dataclass
+from core import Renderable
 from enum import Enum
 
 
@@ -48,7 +49,30 @@ class LayoutMethod:
     def name(cls):
         return cls.__name__
 
-class GridLayout(LayoutMethod):
+
+class ColumnLayout(LayoutMethod):
+    def __init__(self, name, window: curses.window, num_cols):
+        super().__init__(name)
+        print("type", type(window))
+        self._cols = num_cols
+        self._widgets = []
+
+    def add_widget(self, widget: Renderable):
+        pass
+
+    def query_max_w(self):
+        pass
+    def query_max_h(self):
+        pass
+    def query_x(self):
+        pass
+
+
+
+
+
+
+class TemplateGridLayout(LayoutMethod):
 
     def __init__(self, name, grid, window):
         super().__init__(name)
@@ -74,18 +98,20 @@ class GridLayout(LayoutMethod):
                     return
 
             # component bounding box dict
-            component_bb = {}
+            cbb = {"r": {}}
             for y, row in enumerate(parsed_grid):
                 cell: ComponentPlaceholder
+                cbb["r"][y] = {}
                 for x, cell in enumerate(row):
-                    if cell.type == ComponentType.NAMED_COMPONENT:
-                        current_comp = cell.name
-                        if y not in component_bb:
-                            component_bb[y] = {current_comp}
-                            # component_bb[y]["begin"] = x
-            print(component_bb)
-            #print(f"Height {term_height} Width {term_width}")
-
+                    if x == 0:
+                        cbb["r"][y][cell.type] = {"begin": x}
+                        continue
+                    if cell.type in cbb["r"][y]:
+                        # print("found reoccuring inst of ", cell.type, "row", y, "slot", x)
+                        continue
+                    else:
+                        cbb["r"][y][cell.type] = {"begin": x}
+            print(cbb)
         # pre-formatted grid layout
         pre = [block.split(" ") for block in [" ".join(s.split()) for s in self._grid.splitlines()]]
         parsed_layout = []
