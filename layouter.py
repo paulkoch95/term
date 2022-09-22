@@ -9,7 +9,7 @@ import curses
 from dataclasses import dataclass
 from core import Renderable
 from enum import Enum
-
+import _curses
 
 class ComponentType(Enum):
     EMPTY_COMPONENT = 0,
@@ -40,10 +40,12 @@ class Layout:
         self.layout = layout_desc
 
 
-class LayoutMethod:
+class LayoutMethod(Renderable):
 
-    def __init__(self, name):
+    def __init__(self, name, window):
+        super().__init__(window, 0, 0)
         self._name = self.name()
+        print(window)
 
     @classmethod
     def name(cls):
@@ -51,20 +53,30 @@ class LayoutMethod:
 
 
 class ColumnLayout(LayoutMethod):
-    def __init__(self, name, window: curses.window, num_cols):
-        super().__init__(name)
-        print("type", type(window))
+    def __init__(self, name, window: _curses.window, num_cols):
+        super().__init__(name, window)
         self._cols = num_cols
-        self._widgets = []
+        self._widgets: list[Renderable] = []
+
+        self.max_w, self.max_h = window.getmaxyx()
+
+    def render(self):
+        for r in self._widgets:
+            r.render()
 
     def add_widget(self, widget: Renderable):
-        pass
+        w = widget
+        w.width = int(self.max_w/self._cols)
+        w.height = self.max_h
+        self._widgets.append(widget)
 
     def query_max_w(self):
         pass
     def query_max_h(self):
         pass
     def query_x(self):
+        pass
+    def query_y(self):
         pass
 
 
@@ -75,7 +87,7 @@ class ColumnLayout(LayoutMethod):
 class TemplateGridLayout(LayoutMethod):
 
     def __init__(self, name, grid, window):
-        super().__init__(name)
+        super().__init__(name, window)
         self._grid = grid
         self._window = window
 

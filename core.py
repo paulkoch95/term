@@ -45,13 +45,11 @@ class App:
 
     def render(self):
         while True:
-            event = self._window.getch()
             # print(event)
             ctx: Renderable
             for ctx in self._renderables:
                 # sself._window.addstr(0,0,"hi")
                 ctx.render()
-                self._window.addstr(0,0,str(event))
             self._window.refresh()
             time.sleep(0.5)
 
@@ -81,10 +79,15 @@ class Renderable:
     @property
     def width(self):
         return self._w
-
     @property
     def height(self):
         return self._h
+    @width.setter
+    def width(self, width):
+        self._w = width
+    @height.setter
+    def height(self, height):
+        self._h = height
 
 class Text(Renderable):
     """
