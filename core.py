@@ -77,6 +77,12 @@ class Renderable:
         return(f'X: {self._x} Y {self._y} W {self._w} H {self._h}')
 
     @property
+    def position(self):
+        return (self._x, self._y)
+    @position.setter
+    def position(self, position):
+        self._x, self._y = position
+    @property
     def width(self):
         return self._w
     @property

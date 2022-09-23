@@ -45,30 +45,51 @@ class LayoutMethod(Renderable):
     def __init__(self, name, window):
         super().__init__(window, 0, 0)
         self._name = self.name()
-        print(window)
+
+    @property
+    def position(self):
+        return self._x, self._y
+    @position.setter
+    def position(self, position):
+        self.place_widgets()
+        self._x, self._y = position
 
     @classmethod
     def name(cls):
         return cls.__name__
 
+    def place_widgets(self):
+        raise NotImplementedError
 
 class ColumnLayout(LayoutMethod):
     def __init__(self, name, window: _curses.window, num_cols):
         super().__init__(name, window)
         self._cols = num_cols
         self._widgets: list[Renderable] = []
-
-        self.max_w, self.max_h = window.getmaxyx()
+        self.max_h, self.max_w  = window.getmaxyx()
 
     def render(self):
         for r in self._widgets:
             r.render()
 
     def add_widget(self, widget: Renderable):
+        if len(self._widgets) == self._cols: raise Exception(f'Max Num of slots reached! {len(self._widgets)}/{self._cols}')
         w = widget
         w.width = int(self.max_w/self._cols)
         w.height = self.max_h
+        self.place_widgets()
+        w.position = (int(self.max_w/self._cols)*len(self._widgets)+1, 0)
+
         self._widgets.append(widget)
+        # print("Own Position: ", self.position)
+
+    def place_widgets(self):
+        print("Length: ", len(self._widgets))
+        for i, w in enumerate(self._widgets):
+            print("Would set: ", (
+                self.position[0]+int(self.max_w/self._cols)*len(self._widgets)+1,
+                self.position[1] + 0
+            ), self.name())
 
     def query_max_w(self):
         pass
