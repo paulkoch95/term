@@ -40,7 +40,7 @@ class Layout:
         self.layout = layout_desc
 
 
-class LayoutMethod(Renderable):
+class LayoutMethod():
 
     def __init__(self, name, window):
         super().__init__(window, 0, 0)
@@ -51,8 +51,8 @@ class LayoutMethod(Renderable):
         return self._x, self._y
     @position.setter
     def position(self, position):
-        self.place_widgets()
         self._x, self._y = position
+        self.place_widgets()
 
     @classmethod
     def name(cls):
@@ -61,7 +61,7 @@ class LayoutMethod(Renderable):
     def place_widgets(self):
         raise NotImplementedError
 
-class ColumnLayout(LayoutMethod):
+class ColumnLayout(LayoutMethod, Renderable):
     def __init__(self, name, window: _curses.window, num_cols):
         super().__init__(name, window)
         self._cols = num_cols
@@ -74,22 +74,18 @@ class ColumnLayout(LayoutMethod):
 
     def add_widget(self, widget: Renderable):
         if len(self._widgets) == self._cols: raise Exception(f'Max Num of slots reached! {len(self._widgets)}/{self._cols}')
-        w = widget
-        w.width = int(self.max_w/self._cols)
-        w.height = self.max_h
-        self.place_widgets()
-        w.position = (int(self.max_w/self._cols)*len(self._widgets)+1, 0)
 
+        widget.width = int(self.max_w/self._cols)
+        widget.height = self.max_h
+        widget.position = (int(self.max_w/self._cols)*len(self._widgets)+1, 0)
         self._widgets.append(widget)
         # print("Own Position: ", self.position)
 
     def place_widgets(self):
-        print("Length: ", len(self._widgets))
         for i, w in enumerate(self._widgets):
-            print("Would set: ", (
-                self.position[0]+int(self.max_w/self._cols)*len(self._widgets)+1,
-                self.position[1] + 0
-            ), self.name())
+            w.position = (self._x + int(self.max_w/self._cols)*i, self._y + 0)
+        print("Layout Status: ", "X ",self._x, "y", self._y)
+        print("Widget list: ", self._widgets)
 
     def query_max_w(self):
         pass
