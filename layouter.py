@@ -6,6 +6,7 @@ __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
 import curses
+from curses.textpad import rectangle
 from dataclasses import dataclass
 from core import Renderable
 from enum import Enum
@@ -41,6 +42,10 @@ class Layout:
 
 
 class LayoutMethod():
+    """
+    Layout Base Method. Common abstractions for all Layouts.
+    Layouts behave similar to Renderables -> but focus on organization rather than interaction.
+    """
 
     def __init__(self, name, window):
         super().__init__(window, 0, 0)
@@ -48,6 +53,15 @@ class LayoutMethod():
 
     @property
     def position(self):
+        """
+        Anchor -> top-left corner position of the layout.
+        X----
+        |   |
+        |   |
+        |   |
+        -----
+        :return:
+        """
         return self._x, self._y
     @position.setter
     def position(self, position):
@@ -56,46 +70,44 @@ class LayoutMethod():
 
     @classmethod
     def name(cls):
+        """Convenience for intermediate type differentiation between different layout types.
+        TODO: implement isintance
+        """
         return cls.__name__
 
     def place_widgets(self):
         raise NotImplementedError
 
+
 class ColumnLayout(LayoutMethod, Renderable):
-    def __init__(self, name, window: _curses.window, num_cols, width = 10):
+    def __init__(self, name, window: _curses.window, num_cols, width = 10,height = 10, highlight_border = False):
+        # This works because of MRO magic. That simple. (hint: calls from left to right)
         super().__init__(name, window)
+        self.window = window
         self._cols = num_cols
         self._widgets: list[Renderable] = []
-        self.width = width
-        self.max_h, _  = window.getmaxyx()
+        self._w = width
+        self._h = height
 
     def render(self):
         for r in self._widgets:
             r.render()
 
-    def add_widget(self, widget: Renderable):
+    def add_widget(self, widget: Renderable) -> None:
+        """
+        Add a renderable object (widget) to the layout and calculate the correct placement
+        :param widget: Renderable object instance.
+        """
         if len(self._widgets) == self._cols: raise Exception(f'Max Num of slots reached! {len(self._widgets)}/{self._cols}')
+
         widget.width = int(self.width/self._cols)
-        widget.height = self.max_h
+        widget.height = self.height
         widget.position = (int(self.width/self._cols)*len(self._widgets)+1, 0)
         self._widgets.append(widget)
 
     def place_widgets(self):
         for i, w in enumerate(self._widgets):
             w.position = (self._x + int(self.width/self._cols)*i, self._y + 0)
-
-    def query_max_w(self):
-        pass
-    def query_max_h(self):
-        pass
-    def query_x(self):
-        pass
-    def query_y(self):
-        pass
-
-
-
-
 
 
 class TemplateGridLayout(LayoutMethod):
