@@ -29,6 +29,10 @@ class App:
         pass
 
     def add_widget(self, widget: 'Renderable'):
+        try:
+            widget.place_widgets()
+        except:
+            print("This did no work")
         self._renderables.append(widget)
 
     @property

@@ -62,9 +62,10 @@ class LayoutMethod():
         -----
         :return:
         """
-        return self._x, self._y
+        return (self._x, self._y)
     @position.setter
     def position(self, position):
+        print("Position of Layout",self._name, " is being set!")
         self._x, self._y = position
         self.place_widgets()
 
@@ -104,6 +105,7 @@ class ColumnLayout(LayoutMethod, Renderable):
         widget.height = self.height
         widget.position = (int(self.width/self._cols)*len(self._widgets)+1, 0)
         self._widgets.append(widget)
+        # self.place_widgets()
 
     def place_widgets(self):
         for i, w in enumerate(self._widgets):
