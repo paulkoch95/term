@@ -7,10 +7,12 @@ __status__ = "development"
 
 import curses
 from curses.textpad import rectangle
+from drawing import Drawing
 from dataclasses import dataclass
 from core import Renderable
 from enum import Enum
 import _curses
+
 
 class ComponentType(Enum):
     EMPTY_COMPONENT = 0,
@@ -63,9 +65,10 @@ class LayoutMethod():
         :return:
         """
         return (self._x, self._y)
+
     @position.setter
     def position(self, position):
-        print("Position of Layout",self._name, " is being set!")
+        print("Position of Layout", self._name, " is being set!")
         self._x, self._y = position
         self.place_widgets()
 
@@ -81,16 +84,20 @@ class LayoutMethod():
 
 
 class ColumnLayout(LayoutMethod, Renderable):
-    def __init__(self, name, window: _curses.window, num_cols, width = 10,height = 10, highlight_border = False):
+    def __init__(self, name: str, window: _curses.window, num_cols: int, width: int = -1, height: int = -1,
+                 highlight_border: bool = False):
         # This works because of MRO magic. That simple. (hint: calls from left to right)
         super().__init__(name, window)
         self.window = window
         self._cols = num_cols
         self._widgets: list[Renderable] = []
-        self._w = width
-        self._h = height
+        self._w = window.getmaxyx()[1] if width == -1 else width
+        self._h = window.getmaxyx()[0] if height == -1 else height
+        self.highlight_border = highlight_border
 
     def render(self):
+        if self.highlight_border:#
+            Drawing.draw_box(self.window, self._y, self._x, self.height - 1, self._x + self.width - 2)
         for r in self._widgets:
             r.render()
 
@@ -99,17 +106,18 @@ class ColumnLayout(LayoutMethod, Renderable):
         Add a renderable object (widget) to the layout and calculate the correct placement
         :param widget: Renderable object instance.
         """
-        if len(self._widgets) == self._cols: raise Exception(f'Max Num of slots reached! {len(self._widgets)}/{self._cols}')
+        if len(self._widgets) == self._cols: raise Exception(
+            f'Max Num of slots reached! {len(self._widgets)}/{self._cols}')
 
-        widget.width = int(self.width/self._cols)
+        widget.width = int(self.width / self._cols)
         widget.height = self.height
-        widget.position = (int(self.width/self._cols)*len(self._widgets)+1, 0)
+        widget.position = (int(self.width / self._cols) * len(self._widgets) + 1, 0)
         self._widgets.append(widget)
         # self.place_widgets()
 
     def place_widgets(self):
         for i, w in enumerate(self._widgets):
-            w.position = (self._x + int(self.width/self._cols)*i, self._y + 0)
+            w.position = (self._x + int(self.width / self._cols) * i, self._y + 0)
 
 
 class TemplateGridLayout(LayoutMethod):
@@ -125,6 +133,7 @@ class TemplateGridLayout(LayoutMethod):
         Converts Multiline Description String into ComponentPlaceholder objects containing the dimensions and coordinates of the widget that should be placed there.
         :return: list[[ComponentPlaceholder]]
         """
+
         def estimate_relative_position(window, parsed_grid: list[list[ComponentPlaceholder]]):
             term_height, term_width = window.getmaxyx()
             # handle empty layout
@@ -152,16 +161,17 @@ class TemplateGridLayout(LayoutMethod):
                     else:
                         cbb["r"][y][cell.type] = {"begin": x}
             print(cbb)
+
         # pre-formatted grid layout
         pre = [block.split(" ") for block in [" ".join(s.split()) for s in self._grid.splitlines()]]
         parsed_layout = []
         for i, entry in enumerate(pre):
             row = []
             for j, c in enumerate(entry):
-                    if c==".":
-                        row.append(ComponentPlaceholder(type=ComponentType.EMPTY_COMPONENT))
-                    else:
-                        row.append(ComponentPlaceholder(type=ComponentType.NAMED_COMPONENT, name = c))
+                if c == ".":
+                    row.append(ComponentPlaceholder(type=ComponentType.EMPTY_COMPONENT))
+                else:
+                    row.append(ComponentPlaceholder(type=ComponentType.NAMED_COMPONENT, name=c))
             parsed_layout.append(row)
 
         estimate_relative_position(self._window, parsed_layout)
