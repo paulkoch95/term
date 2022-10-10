@@ -31,11 +31,8 @@ class App:
     def __repr__(self):
         return f"Window {self._window}, Width: {self._width}, Height: {self._height}"
 
-    def update(self) -> None:
-        pass
-
     def add_widget(self, widget: 'Renderable') -> None:
-        import layouter
+        from widgets import layouter
         if isinstance(widget, layouter.LayoutMethod):
             widget.place_widgets()
         self._renderables.append(widget)
@@ -54,13 +51,14 @@ class App:
 
     def render(self) -> None:
         while True:
+            self._window.clear()
             # print(event)
             ctx: Renderable
             for ctx in self._renderables:
-                # sself._window.addstr(0,0,"hi")
+                ctx.update()
                 ctx.render()
             self._window.refresh()
-            time.sleep(0.5)
+            time.sleep(0.25)
 
 
 class Renderable:
@@ -79,12 +77,17 @@ class Renderable:
         """
         This Method has to be overwritten by widgets of any sort. Raises an error if not implemented.
         TODO: Default visualization incase method is not overwritten (e.g. show bounding box, print position and size)
-        :return:
         """
         raise NotImplementedError
 
+    def update(self):
+        """
+        This Method is called by the render loop at predefined intervalls and helps to seperate logic from rendering.
+        """
+        pass
+
     def __repr__(self):
-        return (f'X: {self._x} Y {self._y} W {self._w} H {self._h}')
+        return (f'Name: {self.__class__.__name__} X: {self._x} Y {self._y} W {self._w} H {self._h}')
 
     @property
     def position(self):
@@ -110,40 +113,3 @@ class Renderable:
     def height(self, height):
         self._h = height
 
-
-class Text(Renderable):
-    """
-    Simple arbitrary Text Widget that displays text at given position.
-    """
-
-    def __init__(self, render: curses.window, x, y, text):
-        super().__init__(render, x, y)
-        self._text = text
-
-    @property
-    def text(self):
-        return self._text
-
-    def render(self):
-        Drawing.draw_text_label(self._ctx, self._y, self._x, self._text)
-
-
-class Clock(Renderable):
-
-    def __init__(self, render: curses.window, x, y):
-        super().__init__(render, x, y)
-        import time
-
-    def render(self):
-        Drawing.draw_text_label(self._ctx, self._y, self._x, str(time.strftime('%H:%M:%S')) + "█")
-
-
-class BarPlot(Renderable):
-
-    def __init__(self, render: curses.window, x: int, y: int, w: int, h: int):
-        super().__init__(render, x, y)
-
-    def render(self) -> None:
-        Drawing.h_line_staggered(self._ctx, self._y + 27, self._x, 25, 5)
-        Drawing.v_line_staggered(self._ctx, self._y + 25, self._x, 25, 5)
-        Drawing.block_v_line(self._ctx, self._y + 10, self._x, 3)

@@ -95,11 +95,15 @@ class ColumnLayout(LayoutMethod, Renderable):
         self._h = window.getmaxyx()[0] if height == -1 else height
         self.highlight_border = highlight_border
 
-    def render(self):
+    def render(self) -> None:
         if self.highlight_border:#
             Drawing.draw_box(self.window, self._y, self._x, self.height - 1, self._x + self.width - 2)
         for r in self._widgets:
             r.render()
+
+    def update(self) -> None:
+        for r in self._widgets:
+            r.update()
 
     def add_widget(self, widget: Renderable) -> None:
         """
