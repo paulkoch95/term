@@ -1,5 +1,4 @@
 __author__ = "Paul Koch"
-__maintainer__ = "Rob Knight"
 __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
@@ -19,5 +18,4 @@ class Clock(Renderable):
         self.time = str(time.strftime('%H:%M:%S'))
 
     def render(self):
-        # self.update()
         Drawing.draw_text_label(self._ctx, self._y, self._x, self.time + "█")

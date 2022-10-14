@@ -7,6 +7,7 @@ __status__ = "development"
 
 import curses
 from curses.textpad import rectangle
+from widgets.text import AutoScrollText
 from drawing import Drawing
 from dataclasses import dataclass
 from core import Renderable
@@ -33,24 +34,15 @@ class EmptyLayoutException(Exception):
     pass
 
 
-class Layout:
 
-    def __init__(self, layout_desc):
-        """
-        Create a new Layout Manager that handles the layouting based on the selected method.
-        :param layout_desc: The Layouting Method that is used to place all widgets in a window.
-        """
-        self.layout = layout_desc
-
-
-class LayoutMethod():
+class LayoutMethod(Renderable):
     """
     Layout Base Method. Common abstractions for all Layouts.
     Layouts behave similar to Renderables -> but focus on organization rather than interaction.
     """
 
-    def __init__(self, name, window):
-        super().__init__(window, 0, 0)
+    def __init__(self, name, window,x, y):
+        super().__init__(window, x, y)
         self._name = (self.name(), name)
 
     @property
@@ -68,7 +60,9 @@ class LayoutMethod():
 
     @position.setter
     def position(self, position):
+
         print("Position of Layout", self._name, " is being set!")
+        # print(position)
         self._x, self._y = position
         self.place_widgets()
 
@@ -83,11 +77,11 @@ class LayoutMethod():
         raise NotImplementedError
 
 
-class ColumnLayout(LayoutMethod, Renderable):
-    def __init__(self, name: str, window: _curses.window, num_cols: int, width: int = -1, height: int = -1,
+class ColumnLayout(LayoutMethod):#, Renderable):
+    def __init__(self, name: str, window: _curses.window,x, y, num_cols: int, width: int = -1, height: int = -1,
                  highlight_border: bool = False):
         # This works because of MRO magic. That simple. (hint: calls from left to right)
-        super().__init__(name, window)
+        super().__init__(name, window,x,y)
         self.window = window
         self._cols = num_cols
         self._widgets: list[Renderable] = []
@@ -96,7 +90,7 @@ class ColumnLayout(LayoutMethod, Renderable):
         self.highlight_border = highlight_border
 
     def render(self) -> None:
-        if self.highlight_border:#
+        if self.highlight_border:
             Drawing.draw_box(self.window, self._y, self._x, self.height - 1, self._x + self.width - 2)
         for r in self._widgets:
             r.render()
@@ -115,13 +109,16 @@ class ColumnLayout(LayoutMethod, Renderable):
 
         widget.width = int(self.width / self._cols)
         widget.height = self.height
-        widget.position = (int(self.width / self._cols) * len(self._widgets) + 1, 0)
+        # print("Widget", widget.__class__.__name__, "is being added!")
+        widget.position = (int(self.width / self._cols) * len(self._widgets) + 1, self._y+widget.position[1])
         self._widgets.append(widget)
         # self.place_widgets()
 
     def place_widgets(self):
         for i, w in enumerate(self._widgets):
-            w.position = (self._x + int(self.width / self._cols) * i, self._y + 0)
+            #print("Y: ", w._y)
+            print("Widget", w.__class__.__name__, "is being placed!")
+            w.position = (self._x + int(self.width / self._cols) * i, self._y)
 
 
 class TemplateGridLayout(LayoutMethod):

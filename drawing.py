@@ -1,5 +1,4 @@
 __author__ = "Paul Koch"
-__maintainer__ = "Rob Knight"
 __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 

@@ -85,6 +85,9 @@ class Renderable:
         This Method is called by the render loop at predefined intervalls and helps to seperate logic from rendering.
         """
         pass
+    
+    def name(self) -> str:
+        return self.__class__.__name__
 
     def __repr__(self):
         return (f'Name: {self.__class__.__name__} X: {self._x} Y {self._y} W {self._w} H {self._h}')

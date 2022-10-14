@@ -1,5 +1,4 @@
 __author__ = "Paul Koch"
-__maintainer__ = "Rob Knight"
 __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
@@ -40,8 +39,6 @@ class AutoScrollText(Renderable):
             self.i +=1
         else:
             self.i = 0
-        # if len(self._text) > self._len_disp:
-        #     self._text = self._text_raw[:self._len_disp]
 
     def render(self):
         Drawing.draw_text_label(self._ctx, self._y, self._x, self._text)
