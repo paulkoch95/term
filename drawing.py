@@ -6,6 +6,9 @@ import curses, _curses
 from curses.textpad import rectangle
 from enum import Enum
 
+class Chars(Enum):
+    BLACK_RECT = "█",
+    UPPER_HALF = "▀"
 
 class Drawing:
 
@@ -16,6 +19,10 @@ class Drawing:
     @classmethod
     def draw_box(cls, ctx: curses.window, y1, x1, y2, x2):
         rectangle(ctx, y1, x1, y2, x2)
+
+    @classmethod
+    def draw_filled_box(cls, ctx: curses.window, y1, x1, y2, x2):
+        pass
 
     @classmethod
     def h_line_staggered(cls, ctx: curses.window, y, x, len, dots_per_cell):

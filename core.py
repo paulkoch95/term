@@ -49,6 +49,9 @@ class App:
     def handle(self) -> curses.window:
         return self._window
 
+    def render_debug_data(self):
+        pass
+
     def render(self) -> None:
         while True:
             self._window.clear()
@@ -57,6 +60,8 @@ class App:
             for ctx in self._renderables:
                 ctx.update()
                 ctx.render()
+
+            self.render_debug_data()
             self._window.refresh()
             time.sleep(0.25)
 
