@@ -32,9 +32,11 @@ class ScatterGrid(Renderable):
     def __init__(self, render: curses.window, x: int, y: int, w: int, h: int):
         super().__init__(render, x, y)
         self.data: list[list] = [[]]  # [ - rows [ - cols]]
-        # self.data = [["1", "2", "3"], ["4", " ", "6"], ["", "8", "9"]]
 
     def plot(self, data: list[list]) -> None:
+        """
+        Ingest plotting data, must be two-dimensional, flattening should be done beforehand
+        """
         self.data = data
 
     def render(self):

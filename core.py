@@ -27,6 +27,7 @@ class App:
         curses.curs_set(2)
         self._height, self._width = self._window.getmaxyx()
         self._renderables = []
+        self.debug: dict = {}
 
     def __repr__(self):
         return f"Window {self._window}, Width: {self._width}, Height: {self._height}"
@@ -50,17 +51,18 @@ class App:
         return self._window
 
     def render_debug_data(self):
-        pass
+        for idx, (k, v) in enumerate(self.debug.items()):
+            Drawing.draw_text_label(self._window, idx, 0, f"{k}: {v}")
 
     def render(self) -> None:
         while True:
             self._window.clear()
-            # print(event)
             ctx: Renderable
             for ctx in self._renderables:
                 ctx.update()
                 ctx.render()
 
+            self.debug["Mouse"] = str(curses.getmouse())
             self.render_debug_data()
             self._window.refresh()
             time.sleep(0.25)
