@@ -23,7 +23,8 @@ class App:
 
     def __init__(self):
         self._window = curses.initscr()
-        # curses.start_color()
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.curs_set(2)
         self._height, self._width = self._window.getmaxyx()
         self._renderables = []
@@ -62,7 +63,8 @@ class App:
                 ctx.update()
                 ctx.render()
 
-            self.debug["Mouse"] = str(curses.getmouse())
+            self.debug["Wid. Count"] = str(len(self._renderables))
+            self.debug["Color"] = str(curses.has_colors())
             self.render_debug_data()
             self._window.refresh()
             time.sleep(0.25)
