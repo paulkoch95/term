@@ -43,3 +43,23 @@ class ScatterGrid(Renderable):
         for x, row in enumerate(self.data):
             for y, col in enumerate(row):
                 Drawing.draw_text_label(self._ctx, self._y + y, self._x + x, col)
+
+
+class TableView(Renderable):
+    def __init__(self, render: curses.window, x: int, y: int, w: int, h: int):
+        super().__init__(render, x, y)
+        self.data = {"COL1": {1, 2, 3, 4, 5, 6},
+                     "COL2": {1, 2, 3, 4, 5, 6},
+                     "COL3": {1, 2, 3, 4, 5, 6},
+                     "COL4": {1, 2, 3, 4, 5, 6}
+                     }
+
+    def update(self):
+        pass
+
+    def render(self):
+        for idx, (k,v) in enumerate(self.data.items()):
+            if idx == 0:
+                l = [k, *v]
+                Drawing.draw_text_label(self._ctx, self._y+idx, 0, str(l))
+

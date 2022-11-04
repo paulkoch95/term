@@ -53,7 +53,7 @@ class App:
 
     def render_debug_data(self):
         for idx, (k, v) in enumerate(self.debug.items()):
-            Drawing.draw_text_label(self._window, idx, 0, f"{k}: {v}")
+            Drawing.draw_text_label(self._window, idx, self.height-(len(self.debug.keys())), f"{k}: {v}")
 
     def render(self) -> None:
         while True:
