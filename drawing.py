@@ -11,6 +11,11 @@ class Chars(Enum):
     BLACK_RECT = "█",
     UPPER_HALF = "▀"
 
+class CONNECTION_DIR(Enum):
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
+    LEFT = 4
 
 class Drawing:
 
@@ -22,6 +27,19 @@ class Drawing:
     @classmethod
     def draw_box(cls, ctx: curses.window, y1, x1, y2, x2):
         rectangle(ctx, y1, x1, y2, x2)
+
+    @classmethod
+    def draw_grid(cls, ctx: curses.window, y, x, cols, rows, cell_width, cell_height):
+        for column in range(cols):
+            for row in range(rows):
+                # ctx.addch(y+(column*cell_height),x+(row*cell_width),curses.ACS_PLUS)
+                uly, ulx = y+(column*cell_height), x+(row*cell_width)
+                lry, lrx = y+(column*cell_height)+cell_height, x+(row*cell_width)+cell_width
+                ctx.vline(uly + 1, ulx, curses.ACS_VLINE, lry - uly - 1)
+                ctx.hline(uly, ulx + 1, curses.ACS_HLINE, lrx - ulx - 1)
+                ctx.hline(lry, ulx + 1, curses.ACS_HLINE, lrx - ulx - 1)
+                ctx.vline(uly + 1, lrx, curses.ACS_VLINE, lry - uly - 1)
+                # rectangle(ctx, y+(column*cell_height), x+(row*cell_width),  y+(column*cell_height)+cell_height, x+(row*cell_width)+cell_width)
 
     @classmethod
     def draw_filled_box(cls, ctx: curses.window, y1, x1, y2, x2):

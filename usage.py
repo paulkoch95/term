@@ -11,11 +11,14 @@ from widgets.clock import Clock
 from widgets.shapes import FilledBlock
 from widgets.plot import BarPlot, ScatterGrid, TableView
 from widgets.layouter import TemplateGridLayout, ColumnLayout
+import csv
+
 
 app = App()
 
-base_layout = ColumnLayout("Base Layout", app.handle, 0, 0, 2, app.width, 30, highlight_border=False)
-base_layout.add_widget(TableView(app.handle, 0, 0, 10, 10))
+base_layout = ColumnLayout("Base Layout", app.handle, 0, 0, 4, app.width, 30, highlight_border=False)
+tv = TableView(app.handle, 0,0,10,10)
+base_layout.add_widget(tv)
 # base_layout.add_widget(BarPlot(app.handle, 0, 0, 10, 10))
 # base_layout.add_widget(FilledBlock(app.handle, 10, 10, 5, 5 ))
 

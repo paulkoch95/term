@@ -51,9 +51,13 @@ class App:
     def handle(self) -> curses.window:
         return self._window
 
-    def render_debug_data(self):
+    def render_debug_data(self) -> None:
+        """
+        Renders a dict of entries for debug purposes. Eases debugging for "print" users due to curses messing up
+        conventional printing using print()
+        """
         for idx, (k, v) in enumerate(self.debug.items()):
-            Drawing.draw_text_label(self._window, idx, self.height-(len(self.debug.keys())), f"{k}: {v}")
+            Drawing.draw_text_label(self._window, self.height - (len(self.debug.keys())) + idx, 0, f"{k}: {v}")
 
     def render(self) -> None:
         while True:
@@ -63,8 +67,9 @@ class App:
                 ctx.update()
                 ctx.render()
 
-            self.debug["Wid. Count"] = str(len(self._renderables))
+            self.debug["Widget Count"] = str(len(self._renderables)) + " : " + str([type(i) for i in self._renderables])
             self.debug["Color"] = str(curses.has_colors())
+            self.debug["Time"] = str(time.time())
             self.render_debug_data()
             self._window.refresh()
             time.sleep(0.25)
@@ -91,19 +96,19 @@ class Renderable:
 
     def update(self):
         """
-        This Method is called by the render loop at predefined intervalls and helps to seperate logic from rendering.
+        This Method is called by the render loop at predefined intervals and helps to seperate logic from rendering.
         """
         pass
-    
+
     def name(self) -> str:
         return self.__class__.__name__
 
     def __repr__(self):
-        return (f'Name: {self.__class__.__name__} X: {self._x} Y {self._y} W {self._w} H {self._h}')
+        return f'Name: {self.__class__.__name__} X: {self._x} Y {self._y} W {self._w} H {self._h}'
 
     @property
     def position(self):
-        return (self._x, self._y)
+        return self._x, self._y
 
     @position.setter
     def position(self, position):
@@ -124,4 +129,3 @@ class Renderable:
     @height.setter
     def height(self, height):
         self._h = height
-
