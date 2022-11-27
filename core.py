@@ -6,12 +6,9 @@ __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
 import curses
-from curses.textpad import rectangle
-from curses import panel
-import random
+import enum
+from enum import Enum
 import time
-import sys
-import abc
 from typing import Union
 from drawing import Drawing
 import locale
@@ -80,6 +77,11 @@ class Renderable:
     Base Class for all objects that can be displayed on the "screen" terminal.
     """
 
+    class POSITION(Enum):
+        BEGINNING = 0
+        MIDDLE = 1
+        END = 2
+
     def __init__(self, render, x, y):
         self._ctx = render
         self._x = x
@@ -129,3 +131,6 @@ class Renderable:
     @height.setter
     def height(self, height):
         self._h = height
+
+    def left(self, pos: POSITION = None, dim: tuple[int, int] = None):
+        return self._x-dim[0], self._y

@@ -4,6 +4,7 @@ __status__ = "development"
 
 from core import Renderable
 from drawing import Drawing, CONNECTION_DIR
+from widgets.text import AutoScrollText
 import curses
 
 
@@ -48,24 +49,24 @@ class ScatterGrid(Renderable):
 class TableView(Renderable):
     def __init__(self, render: curses.window, x: int, y: int, w: int, h: int):
         super().__init__(render, x, y)
-        self.data = {"COL1": [1, "sehr langer string", "sehr langer string", "sehr langer string", "sehr langer string", "sehr langer string"],
-                     "COL2": {1, "etwas kurzer eintrag", 3, 4, 5, 6},
-                     "COL3": {1, 2, 3, 4, 5, 6},
-                     "COL4": {1, 2, 3, 4, 5, 6}
-                     }
+        self.title = AutoScrollText(render, 5, 0, "Hallo Welt", 4)
+        self.data = {}
 
     def update(self):
-        pass
+        self.title.update()
 
     def ingest(self, data):
         self.data = data
 
     def render(self):
         max_len = 0
+        len_longest_column = 0
         for col, (k, v) in enumerate(self.data.items()):
             lst = [k, *v]
             lst = [str(i) for i in lst]
+            len_longest_column = max(len_longest_column, len(lst))
             max_len = self.width // len(self.data.keys())
             for y, row in enumerate(lst):
                 Drawing.draw_text_label(self._ctx, (self._y + y) * 2 + 1, 1 + (col * max_len) + 1, row)
-        Drawing.draw_grid(self._ctx, 0, 0, len(lst), len(self.data.items()), max_len, 2)
+        Drawing.draw_grid(self._ctx, 0, 0, len_longest_column, len(self.data.items()), max_len, 2)
+        self.title.render()
