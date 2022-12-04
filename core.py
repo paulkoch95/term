@@ -10,8 +10,27 @@ from enum import Enum
 import time
 from utils.drawing import Drawing
 import locale
-
+import logging
 locale.setlocale(locale.LC_ALL, '')
+
+
+class LogStream(object):
+    def __init__(self):
+        self.logs = []
+
+    def write(self, str):
+        self.logs.append(str)
+
+    def flush(self):
+        pass
+
+    def __str__(self):
+        return " _ ".join(self.logs)
+
+
+log_stream = LogStream()
+logging.basicConfig(stream=log_stream, level=logging.DEBUG)
+term_logger = logging.getLogger('term')
 
 
 class App:
@@ -65,10 +84,11 @@ class App:
             for ctx in self._renderables:
                 ctx.update()
                 ctx.render()
-
+            # term_logger.info("Hallo Welt")
             self.debug["Widget Count"] = str(len(self._renderables)) + " : " + str([type(i) for i in self._renderables])
-            self.debug["Color"] = str(curses.has_colors())
+            self.debug["Color"] = "Terminal supports colors" if curses.has_colors() else "No color support."
             self.debug["Time"] = str(time.time())
+            self.debug["Errors"] = str(log_stream.logs)
             self.render_debug_data()
             self._window.refresh()
             time.sleep(0.25)
@@ -145,3 +165,5 @@ class Renderable:
 
     def bottom(self, pos: POSITION = POSITION.BEGINNING, dim: tuple[int, int] = None):
         return self._x+(pos.value * self._w//3), self._y+self._h
+
+
