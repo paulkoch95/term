@@ -6,11 +6,9 @@ __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
 import curses
-import enum
 from enum import Enum
 import time
-from typing import Union
-from drawing import Drawing
+from utils.drawing import Drawing
 import locale
 
 locale.setlocale(locale.LC_ALL, '')

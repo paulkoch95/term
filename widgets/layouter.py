@@ -5,10 +5,7 @@ __author__ = "Paul Koch"
 __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
-import curses
-from curses.textpad import rectangle
-from widgets.text import AutoScrollText
-from drawing import Drawing
+from utils.drawing import Drawing
 from dataclasses import dataclass
 from core import Renderable
 from enum import Enum

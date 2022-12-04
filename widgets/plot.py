@@ -3,7 +3,7 @@ __email__ = "paulkoch95(at)gmail.com"
 __status__ = "development"
 
 from core import Renderable
-from drawing import Drawing, CONNECTION_DIR
+from utils.drawing import Drawing
 from widgets.text import AutoScrollText
 import curses
 
