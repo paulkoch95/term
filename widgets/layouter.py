@@ -60,7 +60,6 @@ class LayoutMethod(Renderable):
     @position.setter
     def position(self, position):
         print("Position of Layout", self._name, " is being set!")
-        # print(position)
         self._x, self._y = position
         self.place_widgets()
 

@@ -39,6 +39,8 @@ class ScatterGrid(Renderable):
         Ingest plotting data, must be two-dimensional, flattening should be done beforehand
         """
         self.data = data
+        self._w = len(data)
+        self._h = len(data[0])
 
     def render(self):
         for x, row in enumerate(self.data):
@@ -67,6 +69,6 @@ class TableView(Renderable):
             len_longest_column = max(len_longest_column, len(lst))
             max_len = self.width // len(self.data.keys())
             for y, row in enumerate(lst):
-                Drawing.draw_text_label(self._ctx, (self._y + y) * 2 + 1, 1 + (col * max_len) + 1, row)
-        Drawing.draw_grid(self._ctx, 0, 0, len_longest_column, len(self.data.items()), max_len, 2)
+                Drawing.draw_text_label(self._ctx, (self._y + y) * 2 + 1, self._x + 1 + (col * max_len) + 1, row)
+        Drawing.draw_grid(self._ctx, self._y, self._x, len_longest_column, len(self.data.items()), max_len, 2)
         self.title.render()

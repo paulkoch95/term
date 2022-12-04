@@ -45,6 +45,10 @@ class App:
         return self._width
 
     @property
+    def center(self)-> tuple[int, int]:
+        return (self._width//2, self._height//2)
+
+    @property
     def handle(self) -> curses.window:
         return self._window
 
@@ -132,5 +136,14 @@ class Renderable:
     def height(self, height):
         self._h = height
 
-    def left(self, pos: POSITION = None, dim: tuple[int, int] = None):
-        return self._x-dim[0], self._y
+    def left(self, pos: POSITION = POSITION.BEGINNING, dim: tuple[int, int] = None):
+        return self._x-dim[0], self._y+(pos.value * self._h//3)
+
+    def top(self, pos: POSITION = POSITION.BEGINNING, dim: tuple[int, int] = None):
+        return self._x+(pos.value*self._w//3), self._y-dim[1]
+
+    def right(self, pos: POSITION = POSITION.BEGINNING, dim: tuple[int, int] = None):
+        return self._x+self._w, self._y+(pos.value * self._h//3)
+
+    def bottom(self, pos: POSITION = POSITION.BEGINNING, dim: tuple[int, int] = None):
+        return self._x+(pos.value * self._w//3), self._y+self._h
