@@ -14,6 +14,7 @@ from widgets.layouter import TemplateGridLayout, ColumnLayout
 
 
 app = App()
+"""
 sg = ScatterGrid(app.handle, 10, 10, 5, 5)
 sg.plot([["1", "2", "3"], ["4", " ", "6"], ["", "8", "9"]])
 app.add_widget(sg)
@@ -29,11 +30,9 @@ sg2.position = sg.bottom(dim=(sg2._w, sg2._h), pos=Renderable.POSITION.END)
 app.add_widget(sg2)
 app.render()
 exit()
-
-
 """
 
-base_layout = ColumnLayout("Base Layout", app.handle, 0, 0, 4, app.width, 30, highlight_border=False)
+base_layout = ColumnLayout("Base Layout", app.handle, 0, 0, 2, app.width, 30, highlight_border=False)
 
 
 tv = TableView(app.handle, 0,0,10,10)
@@ -48,11 +47,16 @@ tv.ingest(
 
 
 bp = BarPlot(app.handle, 0, 0, 10, 10)
+bp.add_bar(10)
+bp.add_bar(11)
+bp.add_bar(12)
+bp.add_bar(12)
+bp.add_bar(12)
 base_layout.add_widget(bp)
 base_layout.add_widget(tv)
 
-ascr = AutoScrollText(app.handle,0,0,"Hello Mert this is some text!", 6)
+# ascr = AutoScrollText(app.handle,0,0,"Hello Mert this is some text!", 6)
 
 
 app.add_widget(base_layout)
-app.render()"""
+app.render()

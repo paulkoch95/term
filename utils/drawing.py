@@ -47,16 +47,20 @@ class Drawing:
 
     @classmethod
     def h_line_staggered(cls, ctx: curses.window, y, x, len, dots_per_cell):
+        data_points = []
+        intervall = len/dots_per_cell
         for i in range(len):
-            if i % dots_per_cell == 0:
+            if i % intervall == 0:
                 ctx.addch(y, x + i, curses.ACS_BTEE)
-                cls.draw_text_label(ctx, y + 1, x + i, str(i))
+                cls.draw_text_label(ctx, y + 1, x + i, str(i//intervall))
+                data_points.append(i)
             else:
                 ctx.addch(y, x + i, curses.ACS_HLINE)
+        return data_points
 
     @classmethod
     def v_line_staggered(cls, ctx: curses.window, y, x, len, dots_per_cell):
-        for i in range(len):
+        for i in range(len+1):
             if i % dots_per_cell == 0:
                 ctx.addch(y - i, x, curses.ACS_LTEE)
                 cls.draw_text_label(ctx, y - i, x + 1, str(i))

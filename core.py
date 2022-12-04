@@ -84,12 +84,12 @@ class Renderable:
         MIDDLE = 1
         END = 2
 
-    def __init__(self, render, x, y):
+    def __init__(self, render, x, y, w=None, h=None):
         self._ctx = render
         self._x = x
         self._y = y
-        self._w = -99
-        self._h = -99
+        self._w = w if w else -99
+        self._h = h if h else -99
 
     def render(self):
         """
