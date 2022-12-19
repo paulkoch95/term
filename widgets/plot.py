@@ -68,18 +68,16 @@ class BarPlot(Renderable):
     def render(self) -> None:
         # intermediate constants to allow the rendering
         self.max_height = max(self.max_height, max(bar.data for bar in self.bars))
+
         # horizontal x-axis object which also returns the indices where a BarSlot shoudl be rendered. will be
         # replaced by its own AXIS Class in the future to allow interchangable axis between different types of graphs
         # and to also accept pyplot axis objects.
         data_points = Drawing.h_line_staggered(self._ctx, self._y + self.height+1, self._x+self.horizontal_offset, self.width, len(self.bars))
         Drawing.v_line_staggered(self._ctx, self._y + self.height, self._x, self.max_height, 2)
+
         bar: BarSlot
         for idx, bar in enumerate(self.bars):
             Drawing.block_v_line(self._ctx, self._y + self._h, self._x + data_points[idx]+self.horizontal_offset, bar.data)
-        # Drawing.draw_text_label(self._ctx, 0,0,str(data_points))
-        # Drawing.block_v_line(self._ctx, self._y + 24, self._x + 1, self.bar_height)
-        # Drawing.block_v_line(self._ctx, self._y + 24, self._x + 2, self.bar_height)
-        # Drawing.block_v_line(self._ctx, self._y + 24, self._x + 4, self.bar_height)
 
 
 class ScatterGrid(Renderable):

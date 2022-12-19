@@ -63,7 +63,7 @@ class App:
 
     @property
     def center(self)-> tuple[int, int]:
-        return (self._width//2, self._height//2)
+        return self._width//2, self._height//2
 
     @property
     def handle(self) -> curses.window:
@@ -78,19 +78,26 @@ class App:
             Drawing.draw_text_label(self._window, self.height - (len(self.debug.keys())) + idx, 0, f"{k}: {v}")
 
     def render(self) -> None:
+        """
+        Base Render Class for any renderable object. Calls render method on all its childs --> one App holds all
+        drawable items.
+        """
         while True:
             self._window.clear()
             ctx: Renderable
             for ctx in self._renderables:
                 ctx.update()
                 ctx.render()
-            # term_logger.info("Hallo Welt")
+
             self.debug["Widget Count"] = str(len(self._renderables)) + " : " + str([type(i) for i in self._renderables])
             self.debug["Color"] = "Terminal supports colors" if curses.has_colors() else "No color support."
             self.debug["Time"] = str(time.time())
             self.debug["Errors"] = str(log_stream.logs)
+
             self.render_debug_data()
+
             self._window.refresh()
+
             time.sleep(0.25)
 
 

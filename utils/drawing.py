@@ -42,6 +42,17 @@ class Drawing:
                 # rectangle(ctx, y+(column*cell_height), x+(row*cell_width),  y+(column*cell_height)+cell_height, x+(row*cell_width)+cell_width)
 
     @classmethod
+    def debug_marker(cls, ctx: curses.window, y, x):
+        ctx.addch(y, x, curses.ACS_DIAMOND)
+
+    @classmethod
+    def draw_hollow_box(cls, ctx: curses.window, y, x, y2, x2):
+        """
+        This is preliminary method. Will be replaced by "tight box" drawing algorithm.
+        """
+        rectangle(ctx, y, x, y2, x2)
+
+    @classmethod
     def draw_filled_box(cls, ctx: curses.window, y1, x1, y2, x2):
         pass
 
